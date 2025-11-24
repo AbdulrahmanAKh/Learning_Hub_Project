@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Search, Menu, User, LogOut, MessageSquare } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +16,7 @@ import {
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileName, setProfileName] = useState<string>("");
   const { user, userRole, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -24,6 +26,24 @@ const Navbar = () => {
     if (userRole === "student") return "/dashboard/student";
     return "/";
   };
+
+  // Fetch user profile name
+  useEffect(() => {
+    if (user?.id) {
+      supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .single()
+        .then(({ data }) => {
+          if (data?.full_name) {
+            setProfileName(data.full_name);
+          }
+        });
+    } else {
+      setProfileName("");
+    }
+  }, [user?.id]);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -61,12 +81,15 @@ const Navbar = () => {
               </Button>
               <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" className="gap-2">
                   <User className="h-5 w-5" />
+                  {profileName && <span className="hidden md:inline">{profileName}</span>}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  {profileName || "My Account"}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate(getDashboardLink())}>
                   Dashboard
