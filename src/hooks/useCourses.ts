@@ -38,6 +38,7 @@ export const useCourses = (
         .select(
           `
           *,
+          instructor_profile:profiles!courses_instructor_id_fkey(full_name),
           category:categories!courses_category_id_fkey(name),
           enrollments(id),
           reviews(rating)
@@ -90,6 +91,7 @@ export const useFeaturedCourses = (limit: number = 6) => {
         .select(
           `
           *,
+          instructor_profile:profiles!courses_instructor_id_fkey(full_name),
           category:categories!courses_category_id_fkey(name),
           enrollments(id),
           reviews(rating)
@@ -126,6 +128,7 @@ export const useRecommendedCourses = (userId: string | undefined) => {
           .select(
             `
             *,
+            instructor_profile:profiles!courses_instructor_id_fkey(full_name),
             category:categories!courses_category_id_fkey(name),
             enrollments(id),
             reviews(rating)
@@ -157,6 +160,7 @@ export const useRecommendedCourses = (userId: string | undefined) => {
         .select(
           `
           *,
+          instructor_profile:profiles!courses_instructor_id_fkey(full_name),
           category:categories!courses_category_id_fkey(name),
           enrollments(id),
           reviews(rating)

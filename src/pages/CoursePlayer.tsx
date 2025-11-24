@@ -92,7 +92,7 @@ const CoursePlayer = () => {
       const { data: progressData, error: progressError } = await supabase
         .from("lesson_progress")
         .select("*")
-        .eq("student_id", user?.id);
+        .eq("enrollment_id", enrollmentData.id);
 
       if (progressError) {
         console.error("Progress error:", progressError);
@@ -123,8 +123,8 @@ const CoursePlayer = () => {
     try {
       if (completed) {
         const { error } = await supabase.from("lesson_progress").insert({
+          enrollment_id: enrollment?.id,
           lesson_id: lessonId,
-          student_id: user?.id,
           is_completed: true,
           completed_at: new Date().toISOString(),
         });
@@ -134,8 +134,8 @@ const CoursePlayer = () => {
         const { error } = await supabase
           .from("lesson_progress")
           .delete()
-          .eq("lesson_id", lessonId)
-          .eq("student_id", user?.id);
+          .eq("enrollment_id", enrollment?.id)
+          .eq("lesson_id", lessonId);
 
         if (error) throw error;
       }
@@ -144,7 +144,7 @@ const CoursePlayer = () => {
       const { data: progressData } = await supabase
         .from("lesson_progress")
         .select("*")
-        .eq("student_id", user?.id);
+        .eq("enrollment_id", enrollment?.id);
 
       setProgress(progressData || []);
 

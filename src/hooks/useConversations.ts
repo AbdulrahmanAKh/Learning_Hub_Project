@@ -106,23 +106,37 @@ export const useConversations = (instructorFilter?: boolean) => {
     }) => {
       if (!user?.id) throw new Error("User not authenticated");
 
-      // Check if conversation already exists
-      const { data: existingParticipations } = await supabase
-        .from("conversation_participants")
-        .select("conversation_id")
-        .eq("user_id", user.id);
-
-      const existingConvIds = existingParticipations?.map((p) => p.conversation_id) || [];
-
-      if (existingConvIds.length > 0) {
-        const { data: recipientParticipations } = await supabase
+      // Check if conversation already exists for this course
+      if (courseId) {
+        const { data: existingParticipations } = await supabase
           .from("conversation_participants")
           .select("conversation_id")
-          .eq("user_id", recipientId)
-          .in("conversation_id", existingConvIds);
+          .eq("user_id", user.id);
 
-        if (recipientParticipations && recipientParticipations.length > 0) {
-          return recipientParticipations[0].conversation_id;
+        const existingConvIds = existingParticipations?.map((p) => p.conversation_id) || [];
+
+        if (existingConvIds.length > 0) {
+          // Check if any conversation is for this specific course
+          const { data: existingConversation } = await supabase
+            .from("conversations")
+            .select("id")
+            .eq("course_id", courseId)
+            .in("id", existingConvIds)
+            .maybeSingle();
+
+          if (existingConversation) {
+            // Verify recipient is in this conversation
+            const { data: recipientInConv } = await supabase
+              .from("conversation_participants")
+              .select("conversation_id")
+              .eq("conversation_id", existingConversation.id)
+              .eq("user_id", recipientId)
+              .maybeSingle();
+
+            if (recipientInConv) {
+              return existingConversation.id;
+            }
+          }
         }
       }
 

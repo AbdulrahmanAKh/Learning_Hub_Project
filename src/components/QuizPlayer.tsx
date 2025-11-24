@@ -113,7 +113,7 @@ const QuizPlayer = ({ lessonId, onComplete }: QuizPlayerProps) => {
         student_id: user?.id,
         score: finalScore,
         answers: finalAnswers,
-        is_passed: isPassed,
+        passed: isPassed,
       });
 
       if (isPassed && onComplete) {

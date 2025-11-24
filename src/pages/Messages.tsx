@@ -71,7 +71,10 @@ const Messages = () => {
         status: "open",
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Support submission error:", error);
+        throw error;
+      }
 
       toast.success("Your message has been sent to admin support");
       setShowSupportDialog(false);

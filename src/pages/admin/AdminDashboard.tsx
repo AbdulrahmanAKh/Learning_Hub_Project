@@ -164,10 +164,10 @@ const AdminDashboard = () => {
         .insert({
           course_id: courseId,
           reviewer_id: user?.id,
-          action: "approved",
+          status: "approved",
         });
 
-      if (historyError) throw historyError;
+      if (historyError) console.error("History error:", historyError);
 
       toast.success("Course approved successfully!");
       fetchStats();
@@ -205,11 +205,11 @@ const AdminDashboard = () => {
         .insert({
           course_id: selectedCourse.id,
           reviewer_id: user?.id,
-          action: "rejected",
-          reason: rejectionReason,
+          status: "rejected",
+          notes: rejectionReason,
         });
 
-      if (historyError) throw historyError;
+      if (historyError) console.error("History error:", historyError);
 
       toast.success("Course rejected");
       setShowRejectDialog(false);
