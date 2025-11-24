@@ -55,8 +55,8 @@ const CourseDetails = () => {
 
   const handleEnroll = async () => {
     if (!user) {
-      toast.error("Please sign in to enroll");
-      navigate("/auth/login");
+      toast.error("Please sign up to enroll in this course");
+      navigate("/auth/register");
       return;
     }
 
