@@ -50,13 +50,19 @@ export const ComplaintsPanel = () => {
 
   const updateComplaint = useMutation({
     mutationFn: async ({ id, status, adminResponse }: any) => {
+      const updateData: any = {
+        status,
+        responded_at: new Date().toISOString(),
+      };
+      
+      // Only add admin_response if the field exists in the schema
+      if (adminResponse) {
+        updateData.admin_response = adminResponse;
+      }
+      
       const { error } = await supabase
         .from("complaints")
-        .update({
-          status,
-          admin_response: adminResponse,
-          responded_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", id);
       
       if (error) throw error;
@@ -168,7 +174,7 @@ export const ComplaintsPanel = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="mb-4">{complaint.message}</p>
+              <p className="mb-4">{complaint.description || complaint.message}</p>
               
               {complaint.admin_response && (
                 <div className="bg-muted p-4 rounded-lg mb-4">
