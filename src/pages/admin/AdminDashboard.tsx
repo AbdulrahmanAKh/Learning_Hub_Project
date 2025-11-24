@@ -151,8 +151,6 @@ const AdminDashboard = () => {
           status: "approved",
           reviewed_by: user?.id,
           reviewed_at: new Date().toISOString(),
-          approved_by: user?.id,
-          approved_at: new Date().toISOString(),
           rejection_reason: null,
         })
         .eq("id", courseId);
