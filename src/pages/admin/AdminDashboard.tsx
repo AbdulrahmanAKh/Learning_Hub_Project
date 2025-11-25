@@ -149,6 +149,7 @@ const AdminDashboard = () => {
         .from("courses")
         .update({
           status: "approved",
+          is_published: true,
           reviewed_by: user?.id,
           reviewed_at: new Date().toISOString(),
           rejection_reason: null,
@@ -190,6 +191,7 @@ const AdminDashboard = () => {
         .from("courses")
         .update({
           status: "rejected",
+          is_published: false,
           reviewed_by: user?.id,
           reviewed_at: new Date().toISOString(),
           rejection_reason: rejectionReason,
