@@ -4,10 +4,10 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
+  // server: {
+  //   host: "::",
+  //   port: 8080,
+  // },
   base: '/Learning_Hub_Project/', // important
   plugins: [react(), ].filter(Boolean),
   resolve: {
