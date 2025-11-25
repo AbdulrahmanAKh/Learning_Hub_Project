@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ReviewSection } from "@/components/ReviewSection";
 import { ContactInstructorButton } from "@/components/ContactInstructorButton";
+import { PaymentDialog } from "@/components/PaymentDialog";
 import { useCourseDetails } from "@/hooks/useCourseDetails";
 import { useWishlist } from "@/hooks/useWishlist";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +26,7 @@ const CourseDetails = () => {
   
   // Check enrollment separately for current user (must be before any returns)
   const [isEnrolled, setIsEnrolled] = React.useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = React.useState(false);
 
   // Log error for debugging
   React.useEffect(() => {
@@ -75,7 +77,19 @@ const CourseDetails = () => {
       return;
     }
 
-    // Create enrollment
+    // For paid courses, show payment dialog
+    if (course && course.price > 0) {
+      setShowPaymentDialog(true);
+      return;
+    }
+
+    // For free courses, enroll directly
+    await completeEnrollment();
+  };
+
+  const completeEnrollment = async () => {
+    if (!id || !user) return;
+
     const { error } = await supabase
       .from("enrollments")
       .insert({
@@ -339,6 +353,17 @@ const CourseDetails = () => {
       </div>
 
       <Footer />
+
+      {/* Payment Dialog */}
+      {course && (
+        <PaymentDialog
+          open={showPaymentDialog}
+          onOpenChange={setShowPaymentDialog}
+          courseTitle={course.title}
+          price={course.price}
+          onPaymentSuccess={completeEnrollment}
+        />
+      )}
     </div>
   );
 };
